@@ -1,12 +1,11 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
-from dash import Dash, html, dcc, Input, Output
-import plotly.express as px
 import pandas as pd
+import plotly.express as px
 import plotly.graph_objects as go
 import yfinance as yf
-
+from dash import Dash, Input, Output, dcc, html
 
 app = Dash(__name__)
 colors = {
@@ -34,7 +33,7 @@ app.layout = html.Div(children=[
         Input a stock index
     ''', style={'textAlign': 'center', 'color': colors['text']}),
 html.Div([
-        "Input: ",
+        "Stock ticker: ",
         dcc.Input(id='my-input', value='initial value', type='text')
     ]),
     html.Br(),
@@ -46,12 +45,15 @@ html.Div([
 ])
 
 @app.callback(
-    Output(component_id='my-output', component_property='children'),
-    Input(component_id='my-input', component_property='value')
+    Output(component_id='example-graph', component_property='figure'),
+    Input(component_id='my-input', component_property='value'),
 )
 
 def update_output_div(input_value):
-    return f'Output: {input_value}'
+    tsla = yf.Ticker(input_value)
+    tsla_data = tsla.history(period='1y')
+    fig = go.Figure(data=go.Scatter(x=tsla_data.index, y=tsla_data["Close"]))
+    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
