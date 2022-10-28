@@ -57,14 +57,16 @@ def main():
     cleaned_weights = ef.clean_weights()
     ef.save_weights_to_file("weights.csv")  # saves to file
 
-    print("Optimal weights for given stocks:")
+    print("\nOptimal weights for given stocks:")
     pprint(cleaned_weights)
+    print("\n")
     ef.portfolio_performance(verbose=True)
     #################################################################################
     #################################################################################
 
     # Get latest price
     latest_prices = get_latest_prices(my_stocks_data)
+    latest_prices.rename("Latest price", inplace=True)
 
     # Calculate how many of each stock can we buy for $100k
     our_budget = 100000
@@ -74,8 +76,17 @@ def main():
     allocation, leftover = da.greedy_portfolio()
 
     # Number of shares per stock
-    print("Discrete allocation:", allocation)
-    print("Funds remaining: ${:.2f}".format(leftover))
+    print("\nDiscrete allocation:", allocation)
+    print("Funds remaining: ${:.2f}".format(leftover), "\n")
+
+    allocation_df = pd.Series(allocation).to_frame("Quantity")
+    allocation_df = allocation_df.join(latest_prices)
+    allocation_df["Allocated money"] = allocation_df.prod(axis=1).map('${:,.2f}'.format)
+
+    weights_df = pd.Series(cleaned_weights).to_frame("Weight").query("`Weight` != 0")
+    allocation_df = allocation_df.join(weights_df)
+
+    print("Allocation table:\n", allocation_df, "\n")
 
 
 if __name__ == "__main__":
