@@ -6,6 +6,7 @@ from pypfopt import expected_returns
 from pypfopt.discrete_allocation import DiscreteAllocation, get_latest_prices
 
 import yfinance as yf
+from pprint import pprint
 
 
 def main():
@@ -55,7 +56,9 @@ def main():
     raw_weights = ef.max_sharpe()
     cleaned_weights = ef.clean_weights()
     ef.save_weights_to_file("weights.csv")  # saves to file
-    print(cleaned_weights)
+
+    print("Optimal weights for given stocks:")
+    pprint(cleaned_weights)
     ef.portfolio_performance(verbose=True)
     #################################################################################
     #################################################################################
