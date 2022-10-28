@@ -24,7 +24,6 @@ def main():
         "CRM",
         "GIL",
         "MCB",
-        "INFO",
         "STM",
         "NVDA",
         "ROG",
